@@ -4,7 +4,7 @@
   "description" : "Learn better",
   "permissions" : ["activeTab", "bookmarks", "declarativeContent", "storage", "tabs", "http://*/"],
   "background" : {
-    "scripts" : ["background.js", "main.js"],
+    "scripts" : ["scripts/background.js", "scripts/main.js"],
     "persistent" : false
   },
   "page_action" : {

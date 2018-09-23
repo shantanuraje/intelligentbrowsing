@@ -1,3 +1,4 @@
+
 var userBookmarks = []
 var serverURL = "http://127.0.0.1:3000"
 class Bookmark {
@@ -14,7 +15,7 @@ $("#analyzeBookmarks").click(function() {
 
 function getUserBookmarks() {
     chrome.bookmarks.getTree(function (bookmarkTree) {
-        // console.log(bookmarkTree['0']['children']);
+        console.log(bookmarkTree['0']['children']);
         for (let i = 0; i < bookmarkTree['0']['children'].length; i++) {
             const bookmarkFolder = bookmarkTree['0']['children'][i]['children'];
             // console.log(bookmarkFolder);
@@ -36,6 +37,9 @@ function getUserBookmarks() {
 }
 
 function postUserBookmarks(userBookmarks) {
+    console.log(firebase.auth().currentUser);
+    console.log(userBookmarks);
+    
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", serverURL + "/retrieveUserBookmarks", true);
     xhttp.setRequestHeader("Content-type", "application/json");
