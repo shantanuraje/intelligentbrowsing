@@ -1,8 +1,8 @@
 {
   "name": "intelligentbrowsing",
   "version": "1.0.0",
-  "description": "View your bookmarks in a different way",
-  "main": "main.js",
+  "description": "",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,11 +10,6 @@
     "type": "git",
     "url": "git+https://github.com/shantanuraje/intelligentbrowsing.git"
   },
-  "keywords": [
-    "bookmarks",
-    "mindmap",
-    "browsing"
-  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -22,8 +17,9 @@
   },
   "homepage": "https://github.com/shantanuraje/intelligentbrowsing#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "boilerpipe-scraper": "^1.0.0",
     "express": "^4.16.3",
-    "firebase": "^4.13.1"
+    "mongoose": "^5.2.17"
   }
 }

@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Sample FirebaseUI App</title>
-    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
-    <script src="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.css" />
-    <script type="text/javascript" src="scripts/firebase-init.js"></script>
-    <script type="text/javascript" src="scripts/firebase-config.js"></script>
-  </head>
-  <body style="background-color: #7ed6df">
-    <div id="firebaseui-auth-container"></div>
-  </body>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    
+    Email: <input type="text" name="email" id="email" value="xyz@abc.com"> 
+    Password: <input type="text" name="password" id="password" value="testing">
+    <button id="login">Login</button>
+
+    <button id="upload-bookmarks">Upload Bookmarks</button>
+
+    <script src="Bookmark.js"></script>
+    <script src="config.js"></script>
+    <script src="main.js"></script>
+</body>
+
 </html>

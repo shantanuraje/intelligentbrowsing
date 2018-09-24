@@ -1,32 +1,20 @@
+//load environment config file
+let config = require('./config.js');
+
 const express = require('express')
-bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 const app = express()
 const boiler = require('boilerpipe-scraper')
-const firebase = require("firebase");
-let currentUser;
-var config = {
-    apiKey: "AIzaSyBKkNfGWAT0BJqks8CxszYkJbjogRzjUL0",
-    authDomain: "bookmark-analyzer.firebaseapp.com",
-    databaseURL: "https://bookmark-analyzer.firebaseio.com",
-    projectId: "bookmark-analyzer",
-    storageBucket: "bookmark-analyzer.appspot.com",
-    messagingSenderId: "215698158184"
-  };
-firebase.initializeApp(config);
 
-firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-        currentUser = user.uid;
-        console.log(currentUser);
-        localStorage.setItem("uid",currentUser);            
-    } else{
-        currentUser = "Error";
-    }
-});
-// Get a reference to the database service
-const database = firebase.database();
+// require mongoose to connect to and work on MongoDB database
+let mongoose = require('mongoose');
+let bookmarkSchema = require('./bookmarkSchema.js');
 
-console.log("hello");
+let Bookmark = mongoose.model('Bookmark', bookmarkSchema);
+
+// setup connection with MongoDB according to environment
+mongoose.connect(config["development"].db);
+let db = mongoose.connection;
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }))
@@ -36,43 +24,41 @@ app.use(bodyParser.json({ limit: '10mb' }))
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
-app.post('/retrieveUserBookmarks', function (req, res) {
-    var userBookmarks = req.body;
-    for (let i = 0; i < 5; i++) {
-        const element = userBookmarks[i];
-        boiler(userBookmarks[i]['url'], (err, text) => {
-            if (err) console.log("Error")
-            else {
-                // console.log("Success")
-                userBookmarks[i]['content'] = text;
-                // console.log(text);
-                uploadBookmarktoDB(userBookmarks[i]);
+app.post('/login', (req, res) => {
+    console.log("Login");
+    res.send("Login request")
+});
 
-                // console.log(database);
-                
-                
+app.post('/uploadBookmarks', (req, res, next) => {
+    console.log("Upload Bookmarks");
+    console.log(req.body.slice(0,11));
+    next();
+    // extraxtContentBP(req.body);
+}, extraxtContentBP);
+
+app.listen(3000, () => console.log('Example app listening on port 3000!'));
+
+//middleware function
+function extraxtContentBP(req, res) {
+    req.body.forEach(bookmark => {
+        boiler(bookmark.url, (err, text) => {
+            if (err) console.log(err)
+            else if(text !== "\r\n"){
+                bookmark.content = text;
+                console.log(req.body.indexOf(bookmark), bookmark.url);
+                // next();
+                uploadBookmarkToDB(bookmark);
             }
         })
-    }
-    // uploadBookmarkstoDB(userBookmarks);
-    
-})
+    });
+    // res.send("Done");
+}
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
 
-function uploadBookmarktoDB(userBookmark) {
-    // console.log(database.ref());
-    // var newBookmarkKey = database.ref().child('bookmarks').child(userBookmark);
-    console.log("Hello", currentUser)
-    // var updates = userBookmark;
-    // console.log(updates);
-    
-    // return database.ref(firebase.auth().currentUser).push(userBookmark)
-
-    // firebase.database().ref("bookmarks").push({
-    //     username: "asd",
-    //     email: "adasd",
-    //     profile_picture : "imageUrl"
-    //   });
-    
+function uploadBookmarkToDB(newBookmark) {
+    Bookmark.create(newBookmark, function (err, bookmark) {
+        if (err) {
+            console.log(err);
+        }
+    })
 }
