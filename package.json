@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "boilerpipe-scraper": "^1.0.0",
+    "compromise": "^11.12.0",
     "express": "^4.16.3",
     "mongoose": "^5.2.17"
   }

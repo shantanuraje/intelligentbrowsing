@@ -2,8 +2,11 @@ let userBookmarks  = [];
 let serverURL = 'http://127.0.0.1:3000';
 
 let uploadBookmarksButton = document.getElementById("upload-bookmarks");
+let analyzeBookmarksButton = document.getElementById("analyze-bookmarks");
+
 
 uploadBookmarksButton.addEventListener("click", () => getUserBookmarks());
+analyzeBookmarksButton.addEventListener("click", () => analyzeUserBookmarks());
 
 function getUserBookmarks() {
     chrome.bookmarks.getTree(function (bookmarkTree) {
@@ -29,7 +32,7 @@ function getUserBookmarks() {
 }
 
 function postUserBookmarks(userBookmarks) {
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.open("POST", serverURL + "/uploadBookmarks", true);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send(JSON.stringify(userBookmarks));
@@ -47,6 +50,11 @@ const isValidUrl = (string) => {
     }
 }
 
+function analyzeUserBookmarks() {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", serverURL + "/preprocessBookmarks", true);
+    xhttp.send();
+}
 // let loginButton = document.getElementById("login");
 // let serverURL = 'http://127.0.0.1:3000'
 // loginButton.addEventListener("click",function (e) {

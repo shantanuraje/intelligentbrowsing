@@ -5,7 +5,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const boiler = require('boilerpipe-scraper')
-
+const nlp = require('compromise');
 // require mongoose to connect to and work on MongoDB database
 let mongoose = require('mongoose');
 let bookmarkSchema = require('./bookmarkSchema.js');
@@ -23,6 +23,14 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }))
 app.use(bodyParser.json({ limit: '10mb' }))
 
 app.get('/', (req, res) => res.send('Hello World!'))
+
+app.get('/preprocessBookmarks', (req, res) => {
+    console.log("Preprocess Bookmarks request");
+    preprocessBookmarks();
+    res.send("Ok");
+
+});
+
 
 app.post('/login', (req, res) => {
     console.log("Login");
@@ -61,4 +69,38 @@ function uploadBookmarkToDB(newBookmark) {
             console.log(err);
         }
     })
+}
+
+function preprocessBookmarks() {
+    console.log("Preprocess Bookmarks function");
+    let text = '';
+    Bookmark.find({},function (err, docs) {
+        if (err) {
+            console.log(err);
+        } else {
+            // console.log(docs);
+            // docs.forEach(doc => {
+            //     text += doc.content;
+            // });
+            let re = new RegExp(/[^A-Za-z ]/, 'gm')
+            // text = text.replace(re, "");
+            // console.log(text);
+            // res.send(text)
+
+            //run regex on each doc and update it
+            docs.forEach(doc => {
+                doc.content = doc.content.replace(re, "");
+                console.log(doc);
+                //find by id and update
+                Bookmark.findByIdAndUpdate(doc._id, doc, function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        // console.log(doc);
+                    }
+                });
+            });
+            res.send("Ok")
+        }
+    } )    
 }
