@@ -64,7 +64,7 @@ function extraxtContentBP(req, res) {
             }
         })
     });
-    // res.send("Done");
+    res.send("Uploaded bookmarks to server");
 }
 
 
@@ -92,34 +92,45 @@ function preprocessBookmarks(req, res) {
             // text = text.replace(re, "");
             // console.log(text);
             // res.send(text)
-
+            let temp;
             //run regex on each doc and update it
             docs.forEach(doc => {
                 doc.content = doc.content.replace(re, "");
-                console.log(doc);
+                // doc._id = new mongoose.Types.ObjectId();
+                // delete doc.key;
+                // temp = doc
+                // console.log(doc);
                 //find by id and update
-                OriginalBookmark.findByIdAndUpdate(doc._id, doc, function (err, doc) {
+                // OriginalBookmark.findByIdAndUpdate(doc._id, doc, function (err, doc) {
+                //     if (err) {
+                //         console.log(err);
+                //     } else {
+                //         // console.log(doc);
+                //     }
+                // });
+                //create modified bookmark
+                ModifiedBookmark.create(doc, function (err) {
                     if (err) {
                         console.log(err);
-                    } else {
-                        // console.log(doc);
                     }
-                });
+                })
             });
-            res.send("Ok")
+            // res.send("Preprocessed bookmarks")
+            res.send(temp)
         }
-    } )    
+    }).lean();    
 }
 
 //middleware
 function analyzeBookmarks(req, res) {
     console.log("Analyze Bookmarks function");
     let tokenizer = new natural.WordTokenizer();
-    OriginalBookmark.find({}, function (err, docs) {
+    ModifiedBookmark.find({}, function (err, docs) {
         if (err) {
             console.log(err);
         } else {
             docs.forEach(doc => {
+                doc.tokens = tokenizer.tokenize(doc.content);
                 // console.log(tokenizer.tokenize(doc.content));
                 // console.log(doc);
                
@@ -138,11 +149,15 @@ function analyzeBookmarks(req, res) {
                 //     })
 
                 // })
-
+                ModifiedBookmark.findByIdAndUpdate(doc._id, doc, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                })
                 // break;
             });
-            res.send("Done")
+            res.send("Analyzed bookmarks")
         }
-    }).lean();
+    }).lean(); //lean() gives a json document instead of mongodb document
     
 }
