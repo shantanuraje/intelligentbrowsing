@@ -6,11 +6,14 @@ const bodyParser = require('body-parser')
 const app = express()
 const boiler = require('boilerpipe-scraper')
 const nlp = require('compromise');
+const natural = require('natural');
+
 // require mongoose to connect to and work on MongoDB database
 let mongoose = require('mongoose');
 let bookmarkSchema = require('./bookmarkSchema.js');
 
-let Bookmark = mongoose.model('Bookmark', bookmarkSchema);
+let OriginalBookmark = mongoose.model('OriginalBookmark', bookmarkSchema, 'original-bookmarks');
+let ModifiedBookmark = mongoose.model('ModifiedBookmark', bookmarkSchema, 'modified-bookmarks');
 
 // setup connection with MongoDB according to environment
 mongoose.connect(config["development"].db);
@@ -24,13 +27,15 @@ app.use(bodyParser.json({ limit: '10mb' }))
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
-app.get('/preprocessBookmarks', (req, res) => {
+app.get('/preprocessBookmarks', (req, res, next) => {
     console.log("Preprocess Bookmarks request");
-    preprocessBookmarks();
-    res.send("Ok");
+    next();
+}, preprocessBookmarks);
 
-});
-
+app.get('/analyzeBookmarks', (req, res, next) => {
+    console.log("Analyze Bookmarks request");
+    next();
+}, analyzeBookmarks);
 
 app.post('/login', (req, res) => {
     console.log("Login");
@@ -64,17 +69,18 @@ function extraxtContentBP(req, res) {
 
 
 function uploadBookmarkToDB(newBookmark) {
-    Bookmark.create(newBookmark, function (err, bookmark) {
+    OriginalBookmark.create(newBookmark, function (err, bookmark) {
         if (err) {
             console.log(err);
         }
     })
 }
 
-function preprocessBookmarks() {
+//middleware
+function preprocessBookmarks(req, res) {
     console.log("Preprocess Bookmarks function");
     let text = '';
-    Bookmark.find({},function (err, docs) {
+    OriginalBookmark.find({},function (err, docs) {
         if (err) {
             console.log(err);
         } else {
@@ -92,7 +98,7 @@ function preprocessBookmarks() {
                 doc.content = doc.content.replace(re, "");
                 console.log(doc);
                 //find by id and update
-                Bookmark.findByIdAndUpdate(doc._id, doc, function (err, doc) {
+                OriginalBookmark.findByIdAndUpdate(doc._id, doc, function (err, doc) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -103,4 +109,40 @@ function preprocessBookmarks() {
             res.send("Ok")
         }
     } )    
+}
+
+//middleware
+function analyzeBookmarks(req, res) {
+    console.log("Analyze Bookmarks function");
+    let tokenizer = new natural.WordTokenizer();
+    OriginalBookmark.find({}, function (err, docs) {
+        if (err) {
+            console.log(err);
+        } else {
+            docs.forEach(doc => {
+                // console.log(tokenizer.tokenize(doc.content));
+                // console.log(doc);
+               
+                // Bookmark.findById(doc._id, function (err, doc) {
+                //     if (err) {
+                //         console.log(err);
+                //     }
+                //     //create tokens for the first time
+                //     doc.set({tokens: tokenizer.tokenize(doc.content)});
+                //     doc.save(function (err, updatedBookmark) {
+                //         if (err) {
+                //             console.log(err);
+                //         }else{
+                //             console.log(updatedBookmark);
+                //         }
+                //     })
+
+                // })
+
+                // break;
+            });
+            res.send("Done")
+        }
+    }).lean();
+    
 }

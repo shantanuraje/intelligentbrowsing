@@ -2,10 +2,12 @@ let userBookmarks  = [];
 let serverURL = 'http://127.0.0.1:3000';
 
 let uploadBookmarksButton = document.getElementById("upload-bookmarks");
+let preprocessBookmarksButton = document.getElementById("preprocess-bookmarks");
 let analyzeBookmarksButton = document.getElementById("analyze-bookmarks");
 
 
 uploadBookmarksButton.addEventListener("click", () => getUserBookmarks());
+preprocessBookmarksButton.addEventListener("click", () => preprocessUserBookmarks());
 analyzeBookmarksButton.addEventListener("click", () => analyzeUserBookmarks());
 
 function getUserBookmarks() {
@@ -50,11 +52,19 @@ const isValidUrl = (string) => {
     }
 }
 
-function analyzeUserBookmarks() {
+function preprocessUserBookmarks() {
     let xhttp = new XMLHttpRequest();
     xhttp.open("GET", serverURL + "/preprocessBookmarks", true);
     xhttp.send();
 }
+
+function analyzeUserBookmarks() {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", serverURL + "/analyzeBookmarks", true);
+    xhttp.send();
+}
+
+
 // let loginButton = document.getElementById("login");
 // let serverURL = 'http://127.0.0.1:3000'
 // loginButton.addEventListener("click",function (e) {
