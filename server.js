@@ -37,6 +37,16 @@ app.get('/analyzeBookmarks', (req, res, next) => {
     next();
 }, analyzeBookmarks);
 
+app.get('/boom', (req, res) => {
+    ModifiedBookmark.find({}, function (err, docs) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(docs);
+        }
+    })
+});
+
 app.post('/login', (req, res) => {
     console.log("Login");
     res.send("Login request")

@@ -4,11 +4,13 @@ let serverURL = 'http://127.0.0.1:3000';
 let uploadBookmarksButton = document.getElementById("upload-bookmarks");
 let preprocessBookmarksButton = document.getElementById("preprocess-bookmarks");
 let analyzeBookmarksButton = document.getElementById("analyze-bookmarks");
-
+let boom = document.getElementById("boom");
 
 uploadBookmarksButton.addEventListener("click", () => getUserBookmarks());
 preprocessBookmarksButton.addEventListener("click", () => preprocessUserBookmarks());
 analyzeBookmarksButton.addEventListener("click", () => analyzeUserBookmarks());
+boom.addEventListener('click', boom());
+
 
 function getUserBookmarks() {
     chrome.bookmarks.getTree(function (bookmarkTree) {
@@ -64,6 +66,11 @@ function analyzeUserBookmarks() {
     xhttp.send();
 }
 
+function boom() {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", serverURL + "/boom", true);
+    xhttp.send();
+}
 
 // let loginButton = document.getElementById("login");
 // let serverURL = 'http://127.0.0.1:3000'
