@@ -66,7 +66,7 @@ function analyzeUserBookmarks() {
     xhttp.send();
 }
 
-function boom() {
+function boomFunction() {
     let xhttp = new XMLHttpRequest();
     xhttp.open("GET", serverURL + "/boom", true);
     xhttp.send();
