@@ -9,7 +9,7 @@ let boom = document.getElementById("boom");
 uploadBookmarksButton.addEventListener("click", () => getUserBookmarks());
 preprocessBookmarksButton.addEventListener("click", () => preprocessUserBookmarks());
 analyzeBookmarksButton.addEventListener("click", () => analyzeUserBookmarks());
-boom.addEventListener('click', boom());
+boom.addEventListener('click', boomFunction());
 
 
 function getUserBookmarks() {
